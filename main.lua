@@ -108,6 +108,7 @@ end
 
 function moveSnake()
     snakeBody[#snakeBody] = {snakeBody[#snakeBody][1]+direction[1], snakeBody[#snakeBody][2]+direction[2]}
+    -- FIXME: when the score is 1, the snake does not increament its length
     for i = 1, #snakeBody-1 do
         snakeBody[i] = snakeBody[i+1]
     end
@@ -126,3 +127,5 @@ function moveSnake()
     end
 
 end
+
+-- TODO: check if the snake bump into itself
