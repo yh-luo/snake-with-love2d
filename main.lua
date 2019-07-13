@@ -73,7 +73,7 @@ end
 
 -- check if the snake bump into itself
 function snakeCollide()
-    if #snakeBody > 1 then
+    if #snakeBody > 4 then -- to bump into itself, the length has to be larger than 4
         for i = 1, #snakeBody-1 do
             if table.concat(snakeBody[i]) == table.concat(snakeBody[#snakeBody]) then
                 return true
