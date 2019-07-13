@@ -19,13 +19,12 @@ local ending = false
 function love.load()
     love.window.setTitle('Snake')
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-    love.graphics.setFont(love.graphics.newFont(32))
-    
-    snakeReset()
+
+    gameReset()
 end
 
 function love.update(dt)
-    if not snakeColide() then
+    if not snakeCollide() then
         snakeTimer = snakeTimer + dt
         if snakeTimer >= SNAKE_SPEED then
             if table.concat(snakeBody[#snakeBody]) == table.concat(apple) then
@@ -44,13 +43,13 @@ function love.update(dt)
         -- create a timer for ending
         endingTimer = endingTimer + dt
         if endingTimer >= 2 then
-            snakeReset()
+            gameReset()
         end
     end
 end
 
 function love.draw()
-    if not snakeColide() then
+    if not snakeCollide() then
         drawScore()
         drawApple()
         drawSnake()
@@ -87,7 +86,8 @@ function love.keypressed(key)
     end
 end
 
-function snakeReset()
+function gameReset()
+    love.graphics.setFont(love.graphics.newFont(32))
     -- randomly generate the snake
     math.randomseed(os.time())
     snakeBody = {{math.random(MAX_TILES_X-1), math.random(MAX_TILES_Y-1)}}
@@ -143,7 +143,8 @@ end
 
 function drawEnding()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print('Score: ' .. tostring(score), 640, 512)
+    love.graphics.setFont(love.graphics.newFont(48))
+    love.graphics.print('Final Score: ' .. tostring(score), math.floor(WINDOW_WIDTH/2)-100, math.floor(WINDOW_HEIGHT/2)-100)
 end
 
 function moveSnake()
@@ -168,7 +169,7 @@ function moveSnake()
 end
 
 -- check if the snake bump into itself
-function snakeColide()
+function snakeCollide()
     if #snakeBody > 1 then
         for i = 1, #snakeBody-1 do
             if table.concat(snakeBody[i]) == table.concat(snakeBody[#snakeBody]) then
