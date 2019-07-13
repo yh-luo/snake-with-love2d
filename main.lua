@@ -102,8 +102,8 @@ function gameReset()
 end
 
 function appleInSnake()
-    for _, value in ipairs(snakeBody) do
-        if value[1] == apple[1] and value[2] == apple[2] then
+    for i = 1, #snakeBody do
+        if table.concat(snakeBody[i]) == table.concat(apple) then
             return true
         end
     end
@@ -176,7 +176,6 @@ function snakeCollide()
                 return true
             end
         end
-    else
-        return false
     end
+    return false
 end
