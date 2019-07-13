@@ -15,11 +15,11 @@ SNAKE_SPEED = 0.1
 
 local snakeBody, score, snakeTimer, apple, direction, endingTimer = nil
 local ending = false
+math.randomseed(os.time())
 
 function gameReset()
     love.graphics.setFont(love.graphics.newFont(32))
     -- randomly generate the snake
-    math.randomseed(os.time())
     snakeBody = {{math.random(MAX_TILES_X-1), math.random(MAX_TILES_Y-1)}}
     score = 0
     snakeTimer = 0
@@ -57,12 +57,12 @@ function moveSnake()
     snakeBody[#snakeBody] = {snakeBody[#snakeBody][1]+direction[1], snakeBody[#snakeBody][2]+direction[2]}
     for i = 1, #snakeBody do
         -- check if the snake is out of the boundaries
-        if snakeBody[i][1] > MAX_TILES_X then
+        if snakeBody[i][1] >= MAX_TILES_X then
             snakeBody[i][1] = 0
         elseif snakeBody[i][1] < 0 then
             snakeBody[i][1] = MAX_TILES_X
         end
-        if snakeBody[i][2] > MAX_TILES_Y then
+        if snakeBody[i][2] >= MAX_TILES_Y then
             snakeBody[i][2] = 0
         elseif snakeBody[i][2] < 0 then
             snakeBody[i][2] = MAX_TILES_Y
@@ -73,11 +73,9 @@ end
 
 -- check if the snake bump into itself
 function snakeCollide()
-    if #snakeBody > 4 then -- to bump into itself, the length has to be larger than 4
-        for i = 1, #snakeBody-1 do
-            if table.concat(snakeBody[i]) == table.concat(snakeBody[#snakeBody]) then
-                return true
-            end
+    for i = 1, #snakeBody-2 do
+        if table.concat(snakeBody[i]) == table.concat(snakeBody[#snakeBody]) then
+            return true
         end
     end
     return false
@@ -123,26 +121,14 @@ function love.keypressed(key)
         love.event.quit()
     end
 
-    if #snakeBody == 1 then
-        if key == 'left' then
-            direction = LEFT
-        elseif key == 'right' then
-            direction = RIGHT
-        elseif key == 'up' then
-            direction = UP
-        elseif key == 'down' then
-            direction = DOWN
-        end
-    else
-        if key == 'left' and table.concat(direction) ~= table.concat(RIGHT) then
-                direction = LEFT
-        elseif key == 'right' and table.concat(direction) ~= table.concat(LEFT) then
-                direction = RIGHT
-        elseif key == 'up' and table.concat(direction) ~= table.concat(DOWN) then
-                direction = UP
-        elseif key == 'down' and table.concat(direction) ~= table.concat(UP) then
-                direction = DOWN
-        end
+    if key == 'left' and (#snakeBody == 1 or table.concat(direction) ~= table.concat(RIGHT)) then
+        direction = LEFT
+    elseif key == 'right' and (#snakeBody == 1 or table.concat(direction) ~= table.concat(LEFT)) then
+        direction = RIGHT
+    elseif key == 'up' and (#snakeBody == 1 or table.concat(direction) ~= table.concat(DOWN)) then
+        direction = UP
+    elseif key == 'down' and (#snakeBody == 1 or table.concat(direction) ~= table.concat(UP)) then
+        direction = DOWN
     end
 end
 
@@ -165,7 +151,7 @@ function love.update(dt)
     else
         -- create a timer for ending
         endingTimer = endingTimer + dt
-        if endingTimer >= 2 then
+        if endingTimer >= 3 then
             gameReset()
         end
     end
